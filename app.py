@@ -70,7 +70,7 @@ def load_rag_chain():
     prompt = ChatPromptTemplate.from_template("""Based on user question give the correct answer based only on context
                                      question:{question}
                                      context:{context}""")
-    llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash', google_api_key=key, temperature=0)
+    llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash', google_api_key=key)
     
     # your original line — just moved inside and returned
     return ({'context': retriever, "question": RunnablePassthrough()} | prompt | llm | StrOutputParser())
