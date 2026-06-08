@@ -74,7 +74,7 @@ prompt = ChatPromptTemplate.from_template("""Based on user question give the cor
                                  question:{question}
                                  context:{context}""")
 
-llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash',google_api_key = key,temperature=0)
+llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash',gemini_api_key = key,temperature=0)
 
 rag_chain = ({'context':retriever,"question":RunnablePassthrough()} | prompt | llm | StrOutputParser() )
 
