@@ -57,26 +57,25 @@ load_dotenv()
 
 key = os.getenv('GEMINI_API_KEY')
 
-loader = PyPDFDirectoryLoader("data")
-doc = loader.load()
-print(doc)
+@st.cache_resource
+def load_rag_chain():
+    loader = PyPDFDirectoryLoader("data")
+    doc = loader.load()
+    splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+    documents = splitter.split_documents(doc)
+    embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    vector_store = Chroma(embedding_function=embedding)
+    vector_store.add_documents(documents)
+    retriever = vector_store.as_retriever()
+    prompt = ChatPromptTemplate.from_template("""Based on user question give the correct answer based only on context
+                                     question:{question}
+                                     context:{context}""")
+    llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash', google_api_key=key, temperature=0)
+    
+    # your original line — just moved inside and returned
+    return ({'context': retriever, "question": RunnablePassthrough()} | prompt | llm | StrOutputParser())
 
-splitter = RecursiveCharacterTextSplitter(chunk_size = 1000,chunk_overlap = 200)
-documents = splitter.split_documents(doc)
-
-
-embedding = HuggingFaceEmbeddings(model_name = "sentence-transformers/all-MiniLM-L6-v2")
-vector_store = Chroma(embedding_function=embedding)
-vector_store.add_documents(doc)
-retriever = vector_store.as_retriever()
-
-prompt = ChatPromptTemplate.from_template("""Based on user question give the correct answer based only on context
-                                 question:{question}
-                                 context:{context}""")
-
-llm = ChatGoogleGenerativeAI(model='gemini-2.5-flash',gemini_api_key = key,temperature=0)
-
-rag_chain = ({'context':retriever,"question":RunnablePassthrough()} | prompt | llm | StrOutputParser() )
+rag_chain = load_rag_chain()  # this replaces the original rag_chain line
 
 query = st.text_input("Enter your question:")
 
