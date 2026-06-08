@@ -111,6 +111,8 @@ Open this link in your browser:
 http://localhost:8501
 
 ---
+## 📸 Screenshot
+![App](screenshot.png)
 
 
 ## 💡 Example Questions
