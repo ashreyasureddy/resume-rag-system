@@ -48,7 +48,7 @@ Resume-RAG-System/
 
 Clone the repository:
 
-git clone https://github.com/yourusername/resume-rag-system.git
+git clone https://github.com/ashreyasureddy/resume-rag-system.git
 
 Or download the ZIP file and extract it.
 
